@@ -1,173 +1,97 @@
-# Email OTP Verifier
+email-verifier-tanu
 
-A simple Node.js package to validate emails, generate OTPs, send verification emails, and verify OTPs.
+A lightweight Node.js package for sending OTP emails with email validation, DNS verification, and customizable branding.
 
----
+Features
+Send OTP via email using Nodemailer
+Email format validation
+Domain validation using MX DNS lookup
+Custom branding support (logo, app name, colors)
+Lightweight and simple API
+No database required (OTP storage handled by user application)
+Installation
+npm install email-verifier-tanu
+Usage
+const { verifyEmail } = require("email-verifier-tanu");
 
-# Features
-
-* Email format validation
-* MX record checking
-* OTP generation
-* OTP verification
-* OTP expiry support
-* Gmail SMTP integration
-* Easy to use
-
----
-
-# Installation
-
-```bash
-npm install email-otp-verifier
-```
-
----
-
-# Usage
-
-## Import Package
-
-```js
-const { verifyEmail, verifyOtp } = require("email-otp-verifier");
-```
-
----
-
-# Send OTP
-
-```js
 await verifyEmail(
-   "user@gmail.com",
-   "yourgmail@gmail.com",
-   "your_app_password"
+  "user@gmail.com",
+  "your@gmail.com",
+  "your-app-password",
+  6,
+  5,
+  {
+    appName: "My App",
+    primaryColor: "#2563eb",
+    logo: "https://example.com/logo.png",
+    supportEmail: "support@myapp.com"
+  }
 );
-```
-
----
-
-# Verify OTP
-
-```js
-await verifyOtp("123456");
-```
-
----
-
-# Complete Example
-
-```js
-const { verifyEmail, verifyOtp } = require("email-otp-verifier");
-
-async function test() {
-
-   await verifyEmail(
-      "user@gmail.com",
-      "yourgmail@gmail.com",
-      "your_app_password"
-   );
-
-   const result = await verifyOtp("123456");
-
-   console.log(result);
-
-}
-
-test();
-```
-
----
-
-# Parameters
-
-## verifyEmail(email, from, pass)
-
-| Parameter | Type   | Description                    |
-| --------- | ------ | ------------------------------ |
-| email     | String | User email                     |
-| from      | String | Gmail address used to send OTP |
-| pass      | String | Gmail App Password             |
-
----
-
-## verifyOtp(userOtp)
-
-| Parameter | Type   | Description         |
-| --------- | ------ | ------------------- |
-| userOtp   | String | OTP entered by user |
-
----
-
-# Return Responses
-
-## Success
-
-```js
+Function Signature
+verifyEmail(
+  email,
+  fromEmail,
+  emailPassword,
+  otpLength,
+  expiryMinutes,
+  branding
+)
+Branding Options
+Option	Description	Default
+appName	Application name shown in email	"Your App"
+logo	Logo URL	""
+primaryColor	Theme color for email UI	"#2563eb"
+supportEmail	Support contact email	""
+How It Works
+Validates email format
+Verifies email domain using DNS MX records
+Generates OTP
+Sends email using Nodemailer
+Returns success response
+Return Value
 {
-   success: true,
-   message: "OTP verified"
+  success: true,
+  message: "OTP sent successfully",
+  otp: {
+    otp: "123456"
+  }
 }
-```
+Important Notes
+This package only sends OTP emails
+It does not store OTPs
+It does not verify OTPs
+OTP verification must be implemented in your backend
+Store OTP securely using database or Redis
+Recommended Architecture
+Frontend -> Request OTP
+Backend -> Calls email-verifier-tanu
+Backend -> Stores OTP
+User -> Submits OTP
+Backend -> Verifies OTP
+Validation Features
 
----
+Email validation:
 
-## Failure
+Regex-based format check
 
-```js
+Domain validation:
+
+MX record lookup using DNS
+Example Response
 {
-   success: false,
-   message: "Invalid OTP"
+  success: true,
+  message: "OTP sent successfully"
 }
-```
-
----
-
-# OTP Expiry
-
-OTP automatically expires after 5 minutes.
-
----
-
-# Gmail Setup
-
-You must use a Gmail App Password.
-
-## Steps
-
-1. Enable 2-Step Verification
-2. Open Google Account Settings
-3. Search "App Passwords"
-4. Generate App Password
-5. Use generated password in your code
-
----
-
-# Example Output
-
-```bash
-valid email
-Email sent
-OTP verified
-```
-
----
-
-# Dependencies
-
-* nodemailer
-* dns
-* otp-generator-tanu
-
----
-
-# Notes
-
-* Works only with Gmail SMTP
-* Store credentials securely
-* Designed for backend usage
-
----
-
-# License
+Requirements
+Node.js 14 or higher
+SMTP credentials (e.g. Gmail app password)
+Internet connection for DNS lookup
+Roadmap
+Rate limiting support
+Redis integration helper
+OTP verification module
+Multiple email templates
+TypeScript support
+License
 
 MIT
